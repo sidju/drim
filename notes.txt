@@ -1,0 +1,5 @@
+TODO:
+
+Move code from routes.rs into handlers/mod.rs
+
+Separate the roles database interaction from the handler, if database function isn't trivial

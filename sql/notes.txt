@@ -1,0 +1,24 @@
+Difficult parts:
+
+Assets as a concept requires modifications where additions were the norm. Less data security and more difficult coding.
+--Assets allow multiple entries. They are summed by a view.--
+--Assets do not allow subtractions. They are used by actions being created.--
+
+Loans can be created and taken out.
+--More complicated coding is required to avoid errors.--
+
+Loans need to be cashed out without instantly returning the influence to the owner. A buffering table that is updated on new rounds is needed.
+--ConsumedInfluence is created for this purpose--
+
+Door openings require an entirely separate pending, denied, active chain.
+--One has been created. The mess of views needed is not yet done.--
+
+Investments can resolve with a delay and should then be shown on the next new round after that delay has passed.
+--Visible boolean flag is set on first new round after Time. When Visible is set all other parts take effect and it is visible to the player.--
+
+
+What would be simpler?:
+
+Investments are active immediately when approved.
+Door openings are abolished (and along with it the separation between assets and influences that further complicates loans and transfers).
+Loans last one round only.
