@@ -2,17 +2,13 @@ drop owned by sid;
 
 --Login entities--
 --Possible roles--
-CREATE TABLE Roles(
-       Name VARCHAR PRIMARY KEY
-);
+CREATE TYPE roles_t AS ENUM('user', 'gm', 'admin');
 
 --Email, password (hashed) and privilege level--
 CREATE TABLE Users(
        eMail VARCHAR(255) PRIMARY KEY NOT NULL CHECK ( eMail ~ '\S*@\S*\.\S*' ),
        pass VARCHAR, --Look over if this is a good choice when writing the more exact handler in php
-       role VARCHAR,
-
-       FOREIGN KEY (role) REFERENCES Roles
+       role roles_t
 );
 
 --Strictly relevant off--

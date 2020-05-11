@@ -14,4 +14,8 @@ pub fn with_opt_auth() -> impl Filter<Extract = (Option<String>,), Error = std::
 {
   warp::cookie::optional("auth")
 }
+pub fn with_auth() -> impl Filter<Extract = (Option<String>,), Error = std::convert::Infallible> + Clone
+{
+  warp::cookie::optional("auth")
+}
 
