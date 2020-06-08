@@ -1,4 +1,4 @@
-use sqlx;
+pub use sqlx::PgPool as DbPool;
 use std::convert::Infallible;
 
 mod models;

@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>DRIM: add user</title>
+  </head>
+  <body>
+    {% match topbar -%}
+      {% when Some with (data) %}
+        Welcome {{ data }}!
+      {% when None %}
+        Welcome Anon!
+    {% endmatch %}
+    <br>
+    <form method="post">
+      Role:<br>
+      <select name="role">
+        <option value="user">User</option>
+        <option value="gm">GM</option>
+        <option value="admin">Admin</option>
+      </select><br>
+      Email:<br>
+      <input name="email" value="{{username}}"><br>
+      Password:<br>
+      <input type="password" name="password"><br>
+      Password again:<br>
+      <input type="password" name="password_conf"><br>
+      <input type="submit" value="Add user">
+    </form>
+  </body>
+</html>

@@ -11,6 +11,13 @@ CREATE TABLE Users(
        role roles_t
 );
 
+CREATE TABLE Sessions(
+  id VARCHAR(24) PRIMARY KEY,
+  user INTEGER,
+  valid_until TIMESTAMP DEFAULT NOW() + 1 day,
+
+  FOREIGN KEY user REFERENCES Users
+)
 --Strictly relevant off--
 CREATE TABLE Players(
        Active BOOL NOT NULL,
