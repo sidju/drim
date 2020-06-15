@@ -26,8 +26,6 @@ pub struct State {
 
 #[tokio::main]
 async fn main() {
-  dotenv().unwrap(); // Reads the .env file in run-dir and sets the environment variables accordingly
-
   let conf = conf::get_conf();
 
   let dbpool = sqlx::PgPool::new(&conf.db_url)

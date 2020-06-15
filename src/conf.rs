@@ -1,3 +1,4 @@
+use dotenv::dotenv;
 
 pub struct Conf {
   pub db_url: String,
@@ -10,6 +11,7 @@ pub struct Conf {
 
 /// Reads the configuration from environment variables
 pub fn get_conf() -> Conf {
+  dotenv().unwrap();
 
   let bind = std::env::var("BIND_IP")
     .unwrap_or("0.0.0.0:8000".to_string())
