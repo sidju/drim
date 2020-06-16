@@ -2,7 +2,6 @@ use warp::reject::{Rejection, custom};
 use crate::Error;
 use crate::db::*;
 use argon2::{self, Config};
-
 // A hasher and verifier that keeps all its settings internally
 pub struct Hasher{
   // The secret and ad stored separate, since the config uses references
@@ -14,18 +13,41 @@ pub struct Hasher{
   config: Config<'static>,
 }
 impl Hasher {
+  pub fn new() -> Self {
+    Self{
+      ad: Vec::new(),
+      secret: Vec::new(),
+      config: Config{
+        ad: &[],
+        secret: &[],
+        hash_length: 32,
+        lanes: 8,
+        mem_cost: 4096,
+        time_cost: 3,
+        thread_mode: argon2::ThreadMode::Parallel,
+        variant: argon2::Variant::Argon2id,
+        version: argon2::Version::Version13,
+      }
+    }
+  }
+  pub fn set_secret(&mut self, b64_secret: &str) {
+    let secret = base64::decode(&b64_secret).unwrap();
+    self.secret = secret;
+  }
+  pub fn set_ad(&mut self, b64_ad: &str) {
+    let ad = base64::decode(&b64_ad).unwrap();
+    self.ad = ad;
+  }
   pub async fn hash(&self, password: String) -> Result<String, Error> {
     // Clone the relevant data for the config
     let secret = self.secret.clone();
     let ad = self.ad.clone();
-    let mut config = self.config.clone();
-
+    let  config = self.config.clone();
     let func = move || {
       // Construct the conf from its parts
       let mut conf = config;
       conf.secret = &secret;
       conf.ad = &ad;
-
       let salt: [u8; 32] = rand::random();
       let hash = argon2::hash_raw(
         password.as_bytes(),
@@ -46,14 +68,12 @@ impl Hasher {
     // Clone the relevant data for the config
     let secret = self.secret.clone();
     let ad = self.ad.clone();
-    let mut config = self.config.clone();
-
+    let  config = self.config.clone();
     let func = move || {
       // Construct the conf from its parts
       let mut conf = config;
       conf.secret = &secret;
       conf.ad = &ad;
-
       let mut old_hash = Vec::new();
       let mut salt = Vec::new();
       for (i, data) in passhash.split('$').enumerate() {

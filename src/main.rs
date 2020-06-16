@@ -28,9 +28,10 @@ pub struct State {
 async fn main() {
   let conf = conf::get_conf();
 
-  let dbpool = sqlx::PgPool::new(&conf.db_url)
-    .await
-    .expect("Failed to connect to database");
+  let dbpool = db::init(&conf.db_url).await;
+
+  let mut hasher = auth::Hasher::new();
+  hasher.set_secret(&conf.hash_key);
 
   let state = State {
     dbpool: dbpool,

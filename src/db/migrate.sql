@@ -45,4 +45,4 @@ CREATE OR REPLACE FUNCTION run_migrations() RETURNS BOOLEAN AS $$
   END;
 $$ LANGUAGE plpgsql;
 
-run_migrations();
+SELECT * FROM run_migrations();

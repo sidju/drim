@@ -13,7 +13,7 @@ tokio = { version = "0.2", features = ["macros", "full"] }
 warp = "0.2"
 # Asynchronous database interaction
 async-native-tls = { version = "0.3", default-features = false, features = [ "runtime-tokio" ] }
-sqlx = { version = "0.2", default-features = false, features = ["runtime-tokio", "macros", "chrono", "postgres"] }
+sqlx = { version = "0.3", default-features = false, features = ["runtime-tokio", "macros", "chrono", "postgres"] }
 # Password hashing and verification
 rust-argon2 = "0.8"
 rand = "0.7.3"
