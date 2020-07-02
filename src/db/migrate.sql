@@ -15,11 +15,12 @@ CREATE OR REPLACE FUNCTION run_migrations() RETURNS BOOLEAN AS $$
         name TEXT PRIMARY KEY
       );
       INSERT INTO roles VALUES ('user'),('gm'),('admin');
-      -- Then the users, all the authentication essential data
+      -- Then the accounts, all the authentication essential data
       CREATE TABLE users(
         id SERIAL PRIMARY KEY,
+        nick TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE CHECK ( email ~ '\S*@\S*\.\S*' ),
-        pass TEXT,
+        pass TEXT NOT NULL,
         role TEXT,
 
         FOREIGN KEY (role) REFERENCES roles

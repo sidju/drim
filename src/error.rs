@@ -9,6 +9,7 @@ pub enum Error {
   Hashing(argon2::Error),
   Block(tokio::task::JoinError),
   Base64(base64::DecodeError),
+  Sqlx(sqlx::Error),
   Forbidden,
   Unauthorized, // Not signed in
 }
@@ -41,6 +42,11 @@ impl std::convert::From<tokio::task::JoinError> for Error {
 impl std::convert::From<base64::DecodeError> for Error {
   fn from(error: base64::DecodeError) -> Self {
     Self::Base64(error)
+  }
+}
+impl std::convert::From<sqlx::Error> for Error {
+  fn from(error: sqlx::Error) -> Self {
+    Self::Sqlx(error)
   }
 }
 pub async fn handle_rejection(err: Rejection)

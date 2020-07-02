@@ -20,7 +20,7 @@ pub fn routes(state: crate::State)
     .and_then(add_user_get)
   ;
   let add_user_post_path = warp::post()
-    .and(with_var(state.hash_key.clone()))
+    .and(with_var(state.hasher.clone()))
     .and(with_db(state.dbpool.clone()))
     .and(with_auth())
     .and(warp::body::content_length_limit(1024*32))
@@ -73,21 +73,11 @@ pub async fn add_user_get(db: DbPool, auth: String)
 
   try_render(AddUserView::new("SOON tm".to_string()))
 }
-pub async fn add_user_post(hash_key: String, db: DbPool, auth: String, form: AddUserForm)
+pub async fn add_user_post(hasher: Hasher, db: DbPool, auth: String, form: AddUserForm)
   -> Result<impl Reply, Rejection>
 {
   eprintln!("Form received: {:?}", form);
   form.validate().unwrap();
-  let passhash = futures::compat::Compat01As03::new(
-    argonautica::Hasher::new()
-      .with_secret_key(hash_key)
-      .with_password(&form.password)
-      .hash_non_blocking()
-  )
-    .await
-    .map_err(Error::from_to_reject)
-  ?;
-  eprintln!("Password hashed into: {:?}", passhash);
   try_render(AddUserView::new("SOON tm".to_string()))
 }
 

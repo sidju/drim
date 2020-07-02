@@ -3,6 +3,7 @@ use crate::Error;
 use crate::db::*;
 use argon2::{self, Config};
 // A hasher and verifier that keeps all its settings internally
+#[derive(Clone, Debug)]
 pub struct Hasher{
   // The secret and ad stored separate, since the config uses references
   // The config is kept partially constructed and is assembled in run-thread
@@ -34,8 +35,7 @@ impl Hasher {
     let secret = base64::decode(&b64_secret).unwrap();
     self.secret = secret;
   }
-  pub fn set_ad(&mut self, b64_ad: &str) {
-    let ad = base64::decode(&b64_ad).unwrap();
+  pub fn set_ad(&mut self, ad: Vec<u8>) {
     self.ad = ad;
   }
   pub async fn hash(&self, password: String) -> Result<String, Error> {

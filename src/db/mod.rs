@@ -5,6 +5,8 @@ use std::convert::Infallible;
 mod models;
 pub use models::*;
 
+pub mod users;
+
 pub async fn init(db_url: &str) -> DbPool {
   let pool = DbPool::new(db_url).await.expect("Failed to connect to database.");
   // After connecting create or replace the migration function and run it
