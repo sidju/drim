@@ -1,6 +1,6 @@
 use super::*;
 
-pub async fn add_user(db: DbPool, user: User)
+pub async fn add(db: DbPool, user: User)
   -> Result<User, crate::Error>
 {
   Ok(
@@ -15,7 +15,7 @@ pub async fn add_user(db: DbPool, user: User)
   )
 }
 
-pub async fn get_user(db: DbPool, id: i32)
+pub async fn get(db: DbPool, id: i32)
   -> Result<User, crate::Error>
 {
   Ok(
@@ -27,7 +27,19 @@ pub async fn get_user(db: DbPool, id: i32)
   )
 }
 
-pub async fn update_user(db: DbPool, user: User)
+pub async fn get_by_email(db: DbPool, email: String)
+  -> Result<User, crate::Error>
+{
+  Ok(
+    sqlx::query_as!(User,
+      "SELECT id, nick, email, pass, role FROM users WHERE email = $1",
+      email
+    )
+      .fetch_one(&db).await?
+  )
+}
+
+pub async fn update(db: DbPool, user: User)
   -> Result<User, crate::Error>
 {
   Ok(

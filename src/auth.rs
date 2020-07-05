@@ -1,6 +1,4 @@
-use warp::reject::{Rejection, custom};
 use crate::Error;
-use crate::db::*;
 use argon2::{self, Config};
 // A hasher and verifier that keeps all its settings internally
 #[derive(Clone, Debug)]
@@ -93,6 +91,8 @@ impl Hasher {
       .await?
   }
 }
+
+// Helper to check form input
 pub fn validate_role(role: &str)
   -> Result<(), validator::ValidationError>
 {
@@ -102,9 +102,4 @@ pub fn validate_role(role: &str)
   else {
     Err(validator::ValidationError::new("Invalid role"))
   }
-}
-pub fn get_user(db: DbPool, auth: String)
-  -> Result<User, Rejection>
-{
-  Err(custom(Error::Unauthorized))
 }

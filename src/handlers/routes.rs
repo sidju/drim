@@ -1,5 +1,9 @@
-use warp::{Filter, Rejection};
+use warp::{Filter, Rejection, Reply};
+use warp::http::StatusCode;
 use std::convert::Infallible;
+
+use crate::error::AuthErr;
+
 // ------------------------------------ //
 // Some helpers for constructing routes //
 // ------------------------------------ //
@@ -17,11 +21,27 @@ pub fn with_db(db: sqlx::PgPool)
   // The clone is needed since the produced closure will be run multiple times
   warp::any().map(move || db.clone())
 }
-pub fn with_opt_auth() -> impl Filter<Extract = (Option<String>,), Error = Infallible> + Clone
+
+pub async fn handle_rejection(err: Rejection)
+  -> Result<impl Reply, std::convert::Infallible>
 {
-  warp::cookie::optional("auth")
-}
-pub fn with_auth() -> impl Filter<Extract = (String,), Error = Rejection> + Clone
-{
-  warp::cookie::cookie("auth")
+  let (code, body) =
+    if let Some(error) = err.find::<AuthErr>() {
+      match error {
+        _ => {
+          eprintln!("Unhandled rejection: {:?}", err);
+          (StatusCode::INTERNAL_SERVER_ERROR, "Internal error")
+        },
+      }
+    }
+    else if let Some(error) = err.find::<warp::filters::body::BodyDeserializeError>() {
+      eprintln!("Bad request: {:?}", error);
+      (StatusCode::BAD_REQUEST, "Bad request")
+    }
+    else {
+      eprintln!("Unhandled rejection: {:?}", err);
+      (StatusCode::INTERNAL_SERVER_ERROR, "Internal error")
+    }
+  ;
+  Ok(warp::reply::with_status(body, code))
 }

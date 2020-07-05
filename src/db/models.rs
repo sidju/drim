@@ -1,9 +1,11 @@
+use super::*;
 // Structs to represent database tables
 // Unlikely to ever be used
 #[derive(Debug)]
 pub struct Role {
   pub name: String,
 }
+#[derive(Debug)]
 pub struct User {
   pub id: i32,
   pub nick: String,
@@ -11,6 +13,13 @@ pub struct User {
   pub pass: String,
   pub role: String,
 }
+#[derive(Debug)]
+pub struct Session {
+  pub uuid: String,
+  pub user: i32,
+  pub until: Date,
+}
+
 // From here --------------
 // All these structures need a file with the same name that has a get, a set and an update
 // Look into users.rs for examples
