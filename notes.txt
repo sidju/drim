@@ -1,14 +1,15 @@
 TODO:
 
-Move code from routes.rs into handlers/mod.rs
+Start using the new error handling system.
+
+Set the session uuid in auth cookie.
+
+Add requirement "today > sessions.until" to auth filters
+
+Add version-numbers to hash format.
+
+Create function to generate session id.
+
+Move code from routes.rs into handlers/mod.rs.
 
 Separate the roles database interaction from the handler, if database function isn't trivial
-
-Database interactions are esentially trivial. Thus they could be inlined easily, but that
-makes code reuse difficult if not impossible. As long as no database changes are made it
-should be ok.
-
-
-Create a universal error handler, that responds to any application error in a reasonable 
-manner. (Redirect to login if unauthorised, pretty error pages if user did bad stuff, 500 if
-something that shouldn't have happened happened.)

@@ -15,8 +15,9 @@ pub struct User {
 }
 #[derive(Debug)]
 pub struct Session {
-  pub uuid: String,
-  pub user: i32,
+  pub id: i32,
+  pub uuid: uuid::Uuid,
+  pub userid: i32,
   pub until: Date,
 }
 

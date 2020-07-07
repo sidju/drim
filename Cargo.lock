@@ -407,6 +407,7 @@ dependencies = [
  "askama 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "async-native-tls 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "base64 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "chrono 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1931,6 +1932,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "uuid"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "rand 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "validator"

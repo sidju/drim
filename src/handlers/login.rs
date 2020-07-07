@@ -69,7 +69,7 @@ pub async fn login_post(hasher: Hasher, db: DbPool, query: LoginForm)
 {
   println!("This was the login post submitted: {:?}", query);
 
-  let user = match users::get_by_email(db, query.email).await {
+  let user = match users::get_by_email(db.clone(), query.email).await {
     Ok(user) => user,
     Err(Error::Sqlx(sqlx::Error::RowNotFound)) => User{
       id: -1,
@@ -86,7 +86,18 @@ pub async fn login_post(hasher: Hasher, db: DbPool, query: LoginForm)
       hasher.verify(query.password, user.pass).await.unwrap() &&
       user.id != -1
     {
-      format!("You are signed in as {}", user.nick)
+      let until = match query.remember_me {
+        Some(_) => chrono::offset::Utc::today() + chrono::Duration::weeks(26),
+        None => chrono::offset::Utc::today() + chrono::Duration::days(2),
+      };
+      let session = sessions::add(db, Session{
+        id: -1,
+        uuid: uuid::Uuid::new_v4(),
+        userid: user.id,
+        until: until.naive_utc()
+      }).await.unwrap();
+
+      format!("You are signed in as {:?}", session)
     }
     else {
       "Something was wrong...".to_string()
