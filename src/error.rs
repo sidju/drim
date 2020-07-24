@@ -8,7 +8,7 @@ pub enum AuthErr {
 }
 impl warp::reject::Reject for AuthErr {}
 
-// The crate wide error type
+// The crate wide error type (implements reply)
 #[derive(Debug)]
 pub enum Error {
   Render(askama::Error),
@@ -18,6 +18,18 @@ pub enum Error {
   Base64(base64::DecodeError),
   Sqlx(sqlx::Error),
   Uuid(uuid::Error),
+}
+
+impl warp::reply::Reply for Error {
+  fn into_response(self) -> warp::reply::Response {
+    println!("Error occurred: {:?}", self);
+    warp::reply::with_status(
+      warp::reply::html(
+        "Internal server error."
+      ),
+      warp::http::StatusCode::INTERNAL_SERVER_ERROR
+    ).into_response()
+  }
 }
 
 impl std::convert::From<askama::Error> for Error {

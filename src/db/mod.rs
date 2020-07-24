@@ -1,7 +1,7 @@
 pub use sqlx::PgPool as DbPool;
 use crate::Error;
 use sqlx::prelude::*;
-use sqlx::types::chrono::NaiveDate as Date;
+use sqlx::types::chrono::NaiveDateTime as DateTime;
 
 mod models;
 pub use models::*;

@@ -8,8 +8,12 @@
         Welcome {{ data }}!
       {% when None %}
         Welcome Anon!
-    {% endmatch %}
+    {% endmatch %}<br>
     <br>
+    {% if wrong %}
+      Wrong email or password. Try again.<br>
+      <br>
+    {% endif %}
     <form method="post">
       Email:<br>
       <input name="email" value="{{email}}"><br>

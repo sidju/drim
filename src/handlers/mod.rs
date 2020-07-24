@@ -22,11 +22,11 @@ pub fn routes(state: crate::State)
 {
   let index = warp::path::end()
     .and(try_user(state.dbpool.clone()))
-    .map(| user | Ok(format!("This is the index. user is {:?}", user)));
+    .map(| user | format!("This is the index. user is {:?}", user));
 
   let hello = warp::path("pool")
     .and(with_var(state.dbpool.clone()))
-    .map(move |pool| Ok(format!("The pool debug is {:?}.", pool)));
+    .map(move |pool| format!("The pool debug is {:?}.", pool));
 
   index
     .or(hello)

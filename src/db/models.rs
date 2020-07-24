@@ -18,7 +18,7 @@ pub struct Session {
   pub id: i32,
   pub uuid: uuid::Uuid,
   pub userid: i32,
-  pub until: Date,
+  pub until: DateTime,
 }
 
 // From here --------------

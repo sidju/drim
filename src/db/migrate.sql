@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION run_migrations() RETURNS BOOLEAN AS $$
         id SERIAL PRIMARY KEY,
         userid INTEGER,
         uuid UUID UNIQUE,
-        until DATE,
+        until TIMESTAMP,
 
         FOREIGN KEY (userid) REFERENCES users
       );
