@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT (Nonce, TargetPath, TargetQuery) from Logins WHERE StateID = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "row",
+        "type_info": "Record"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "e27d82822e2083d242d550a5d8e4ec87b6c3d8497600a76e3cf63f13de2fcfe5"
+}

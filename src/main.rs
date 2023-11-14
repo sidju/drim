@@ -1,52 +1,70 @@
-// Routing and web serving
-use warp::Filter;
-// Validating form input requires macro import
-#[macro_use]
-extern crate validator_derive;
-extern crate validator;
+use hyper::service::{
+  make_service_fn,
+  service_fn,
+};
+use hyper::Server;
+use std::net::SocketAddr;
+use std::convert::Infallible;
 
-extern crate uuid;
+// Define and construct application state (config / data shared across threads)
+mod state;
+use state::*;
 
+// These define how to convert between errors and responses
+// Slightly magicky, but well defined by the std::convert::From/Into traits
+mod traits;
+use traits::*;
 mod error;
-pub use error::Error;
+use error::*;
 
-mod conf;
-mod db;
-mod handlers;
-mod auth;
+// Define how to handle the actual requests
+mod routes;
 
-pub struct State {
-  dbpool: db::DbPool,
-  hasher: auth::Hasher,
-}
-
+// Wraps the main function in an async runtime
 #[tokio::main]
 async fn main() {
-  // Get the configuration from environment + .env file
-  let conf = conf::get_conf();
+  let state = init_state().await;
+  let addr = SocketAddr::from(([0,0,0,0], 8888));
+  run_server(state, addr).await
+}
 
-  // Initiate database connection
-  let dbpool = db::init(&conf.db_url).await;
+async fn run_server(
+  state: &'static State,
+  addr: SocketAddr,
+) {
+  // Define what to do with requests
+  // - A Service is a stateful worker that responds to one request at a time.
+  //   service_fn creates a Service from a FnMut that accepts Request and 
+  //   returns a Response Future.
+  // - A "MakeService" is a Service that creates more Services.
+  //   make_service_fn is essentially the same as service_fn, but requiring
+  //   that Fn::Return is a Service
+  //   Since we can create that from a closure, we can bind in variables to
+  //   all created Services
+  // - The Services defined match the expected APIs for Tower, so you can use
+  //   their pre-routing filters and middlewares. For example you can wrap
+  //   the inner service_fn output using tower::Layer::layer, or combine
+  //   layers onto a service using tower::builder::ServiceBuilder.
+  let make_service = make_service_fn(|_conn| async move {
+    Ok::<_, Infallible>(service_fn(move |req| handle_request(state, req)))
+  });
 
-  // Initiate hashing struct
-  let mut hasher = auth::Hasher::new();
-  hasher.set_secret(&conf.hash_key);
-  hasher.set_ad("Galf_drim".into());
+  // Create and configure the server
+  let server = Server::bind(&addr).serve(make_service);
 
-  // Set the admin account details
-  let admin_passhash = hasher.hash(conf.admin_password.clone()).await
-    .expect("Failed to hash admin password.");
-  db::users::set_admin(dbpool.clone(), conf.admin_username, admin_passhash).await
-    .expect("Failed to set admin password.");
+  // Finally run it all (forever, probably won't ever return)
+  match server.await {
+    Ok(_) => println!("Server ran successfully"),
+    Err(e) => eprintln!("Error occured: {}", e),
+  }
+}
 
-  // Wrap it into the a state struct
-  let state = State {
-    dbpool: dbpool,
-    hasher: hasher,
-  };
-
-  // Start serving based on routes from handlers
-  warp::serve(handlers::routes(state).recover(handlers::handle_rejection))
-    .run((conf.bind_ip, conf.bind_port))
-    .await;
+// The service_fn type requires we hand out an error, but we declare one that
+// cannot exist to show that we will never return an error from here
+pub async fn handle_request(
+  state: &'static State,
+  req: Request,
+) -> Result<Response, Infallible> {
+  // Call the routing, convert both error and success into a response to return
+  Ok(routes::route(state, req).await.into_response())
 }
