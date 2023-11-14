@@ -6,7 +6,7 @@ license = "MIT"
 edition = "2021"
 
 [dependencies]
-dotenv = "0.15"
+dotenvy = "*"
 # Web serving framework
 hyper = { version = "0.14", features = ["full"] }
 # Multithreaded/asynchronous runtime (version controlled by hyper)

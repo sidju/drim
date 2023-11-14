@@ -39,7 +39,7 @@ pub struct State {
 
 pub async fn init_state() -> &'static State {
   // Read in .env file via dotenv
-  dotenv::dotenv().expect("Failed to read .env file into environment");
+  dotenvy::dotenv().expect("Failed to read .env file into environment");
 
   // Get needed data from environment
   let max_content_len = var("MAX_CONTENT_LEN")
